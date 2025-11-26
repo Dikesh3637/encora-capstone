@@ -1,33 +1,37 @@
 package com.techademy.productcatalog.dto;
 
 import java.math.BigDecimal;
+import java.util.Map;
 
 public class ProductDto {
 
-    private Long id;
-    private String name;
-    private String description;
-    private BigDecimal price;
-    private String category;
-    private Integer stock;
-    private Double rating;
-    private String imageUrl;
+	private Long id;
+	private String name;
+	private String description;
+	private BigDecimal price;
+	private String category;
+	private Map<String, Integer> sizeStock;
+	private Double rating;
+	private String imageUrl;
+	private String gender;
 
-    public ProductDto() {}
+	public ProductDto() {
+	}
 
-    public ProductDto(Long id, String name, String description,
-                      BigDecimal price, String category, Integer stock,
-                      Double rating, String imageUrl) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.price = price;
-        this.category = category;
-        this.stock = stock;
-        this.rating = rating;
-        this.imageUrl = imageUrl;
-    }
+	public ProductDto(Long id, String name, String description, BigDecimal price, String category,
+			Map<String, Integer> sizeStock, Double rating, String imageUrl, String gender) {
+		this.id = id;
+		this.name = name;
+		this.description = description;
+		this.price = price;
+		this.category = category;
+		this.sizeStock = sizeStock;
+		this.rating = rating;
+		this.imageUrl = imageUrl;
+		this.gender = gender;
+	}
 
+	// Getters & setters
 	public Long getId() {
 		return id;
 	}
@@ -68,12 +72,12 @@ public class ProductDto {
 		this.category = category;
 	}
 
-	public Integer getStock() {
-		return stock;
+	public Map<String, Integer> getSizeStock() {
+		return sizeStock;
 	}
 
-	public void setStock(Integer stock) {
-		this.stock = stock;
+	public void setSizeStock(Map<String, Integer> sizeStock) {
+		this.sizeStock = sizeStock;
 	}
 
 	public Double getRating() {
@@ -90,5 +94,13 @@ public class ProductDto {
 
 	public void setImageUrl(String imageUrl) {
 		this.imageUrl = imageUrl;
+	}
+
+	public String getGender() {
+		return gender;
+	}
+
+	public void setGender(String gender) {
+		this.gender = gender;
 	}
 }

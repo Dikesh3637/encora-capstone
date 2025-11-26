@@ -2,74 +2,86 @@ package com.techademy.productcatalog.dto;
 
 import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
+import java.util.Map;
 
 public class CreateProductRequest {
 
-    @NotBlank
-    private String name;
+	@NotBlank
+	private String name;
 
-    private String description;
+	private String description;
 
-    @NotNull
-    @DecimalMin("0.0")
-    private BigDecimal price;
+	@NotNull
+	@DecimalMin("0.0")
+	private BigDecimal price;
 
-    private String category;
+	private String category;
 
-    @Min(0)
-    private Integer stock = 0;
+	private String gender;
 
-    private String imageUrl;
+	@NotEmpty(message = "At least one size with stock is required")
+	private Map<String, Integer> sizeStock;
 
-    public CreateProductRequest() {}
+	private String imageUrl;
 
-    // GETTERS
-    public String getName() {
-        return name;
-    }
+	public CreateProductRequest() {
+	}
 
-    public String getDescription() {
-        return description;
-    }
+	// Getters
+	public String getName() {
+		return name;
+	}
 
-    public BigDecimal getPrice() {
-        return price;
-    }
+	public String getDescription() {
+		return description;
+	}
 
-    public String getCategory() {
-        return category;
-    }
+	public BigDecimal getPrice() {
+		return price;
+	}
 
-    public Integer getStock() {
-        return stock;
-    }
+	public String getCategory() {
+		return category;
+	}
 
-    public String getImageUrl() {
-        return imageUrl;
-    }
+	public String getGender() {
+		return gender;
+	}
 
-    // SETTERS
-    public void setName(String name) {
-        this.name = name;
-    }
+	public Map<String, Integer> getSizeStock() {
+		return sizeStock;
+	}
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+	public String getImageUrl() {
+		return imageUrl;
+	}
 
-    public void setPrice(BigDecimal price) {
-        this.price = price;
-    }
+	// Setters
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public void setCategory(String category) {
-        this.category = category;
-    }
+	public void setDescription(String description) {
+		this.description = description;
+	}
 
-    public void setStock(Integer stock) {
-        this.stock = stock;
-    }
+	public void setPrice(BigDecimal price) {
+		this.price = price;
+	}
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
+	public void setCategory(String category) {
+		this.category = category;
+	}
+
+	public void setGender(String gender) {
+		this.gender = gender;
+	}
+
+	public void setSizeStock(Map<String, Integer> sizeStock) {
+		this.sizeStock = sizeStock;
+	}
+
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
+	}
 }

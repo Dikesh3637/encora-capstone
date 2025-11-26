@@ -3,131 +3,140 @@ package com.techademy.productcatalog.entity;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
-@Table(name = "products", indexes = {
-        @Index(columnList = "name"),
-        @Index(columnList = "category")
-})
+@Table(name = "products", indexes = { @Index(columnList = "name"), @Index(columnList = "category"),
+		@Index(columnList = "gender") })
 public class Product {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    @Column(nullable = false)
-    private String name;
+	@Column(nullable = false)
+	private String name;
 
-    @Column(length = 4000)
-    private String description;
+	@Column(length = 4000)
+	private String description;
 
-    @Column(nullable = false)
-    private BigDecimal price;
+	@Column(nullable = false)
+	private BigDecimal price;
 
-    private String category;
+	private String category;
 
-    private Integer stock;
+	private String gender;
 
-    private Double rating;
+	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<ProductSize> sizes = new ArrayList<>();
 
-    @Column(name = "image_url")
-    private String imageUrl;
+	private Double rating;
 
-    private Instant createdAt;
-    private Instant updatedAt;
+	@Column(name = "image_url")
+	private String imageUrl;
 
-    @PrePersist
-    public void prePersist() {
-        createdAt = Instant.now();
-        updatedAt = createdAt;
-    }
+	private Instant createdAt;
+	private Instant updatedAt;
 
-    @PreUpdate
-    public void preUpdate() {
-        updatedAt = Instant.now();
-    }
-    
-    // GETTERS
-   
-    public Long getId() {
-        return id;
-    }
+	@PrePersist
+	public void prePersist() {
+		createdAt = Instant.now();
+		updatedAt = createdAt;
+	}
 
-    public String getName() {
-        return name;
-    }
+	@PreUpdate
+	public void preUpdate() {
+		updatedAt = Instant.now();
+	}
 
-    public String getDescription() {
-        return description;
-    }
+	// Getters
+	public Long getId() {
+		return id;
+	}
 
-    public BigDecimal getPrice() {
-        return price;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public String getCategory() {
-        return category;
-    }
+	public String getDescription() {
+		return description;
+	}
 
-    public Integer getStock() {
-        return stock;
-    }
+	public BigDecimal getPrice() {
+		return price;
+	}
 
-    public Double getRating() {
-        return rating;
-    }
+	public String getCategory() {
+		return category;
+	}
 
-    public String getImageUrl() {
-        return imageUrl;
-    }
+	public String getGender() {
+		return gender;
+	}
 
-    public Instant getCreatedAt() {
-        return createdAt;
-    }
+	public List<ProductSize> getSizes() {
+		return sizes;
+	}
 
-    public Instant getUpdatedAt() {
-        return updatedAt;
-    }
-    // SETTERS
-  
+	public Double getRating() {
+		return rating;
+	}
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	public String getImageUrl() {
+		return imageUrl;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public Instant getCreatedAt() {
+		return createdAt;
+	}
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+	public Instant getUpdatedAt() {
+		return updatedAt;
+	}
 
-    public void setPrice(BigDecimal price) {
-        this.price = price;
-    }
+	// Setters
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    public void setCategory(String category) {
-        this.category = category;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public void setStock(Integer stock) {
-        this.stock = stock;
-    }
+	public void setDescription(String description) {
+		this.description = description;
+	}
 
-    public void setRating(Double rating) {
-        this.rating = rating;
-    }
+	public void setPrice(BigDecimal price) {
+		this.price = price;
+	}
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
+	public void setCategory(String category) {
+		this.category = category;
+	}
 
-    public void setCreatedAt(Instant createdAt) {
-        this.createdAt = createdAt;
-    }
+	public void setGender(String gender) {
+		this.gender = gender;
+	}
 
-    public void setUpdatedAt(Instant updatedAt) {
-        this.updatedAt = updatedAt;
-    }
+	public void setSizes(List<ProductSize> sizes) {
+		this.sizes = sizes;
+	}
+
+	public void setRating(Double rating) {
+		this.rating = rating;
+	}
+
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
+	}
+
+	public void setCreatedAt(Instant createdAt) {
+		this.createdAt = createdAt;
+	}
+
+	public void setUpdatedAt(Instant updatedAt) {
+		this.updatedAt = updatedAt;
+	}
 }
