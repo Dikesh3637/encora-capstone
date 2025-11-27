@@ -8,8 +8,9 @@ import RegisterPage from "./pages/auth/RegisterPage.jsx";
 import LayoutWithNavbar from "./layout/LayoutWithNavbar.jsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { UserProvider } from "./provider/userProvider.jsx";
-import ProductsPage from "./components/ProductsPage.jsx";
+import ProfilePageLayout from "./layout/ProfileLayout.jsx";
 const queryClient = new QueryClient();
+import ProductsPage from "./pages/ProductsPage.jsx";
 
 createRoot(document.getElementById("root")).render(
     <StrictMode>
@@ -19,7 +20,14 @@ createRoot(document.getElementById("root")).render(
                     <Routes>
                         <Route path="/" element={<LayoutWithNavbar />}>
                             <Route path="/" element={<App />}></Route>
-                            <Route path="/products" element={<ProductsPage />} />
+                            <Route
+                                path="/profile"
+                                element={<ProfilePageLayout />}
+                            ></Route>
+                            <Route
+                                path="/products"
+                                element={<ProductsPage />}
+                            />
                             <Route
                                 path="/auth/login"
                                 element={<LoginPage />}
