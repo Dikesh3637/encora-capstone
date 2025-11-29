@@ -1,5 +1,6 @@
 package com.example.auth_service.service;
 
+import com.example.auth_service.dto.ChangePasswordRequestDto;
 import com.example.auth_service.dto.LoginRequestDto;
 import com.example.auth_service.dto.RegisterRequestDto;
 import com.example.auth_service.dto.RegisterResponseDto;
@@ -80,5 +81,24 @@ public class AuthService {
     String accessToken = jwtUtilService.generateAccessToken(user);
 
     return accessToken;
+  }
+
+  public void changePassword(ChangePasswordRequestDto requestDto, String token) {
+    System.out.println("Changing password for token: " + token);
+    String email = jwtUtilService.extractClaim(token, "email");
+    if (requestDto.getNewPassword().equals(requestDto.getOldPassword())) {
+      throw new InvalidCredentialsException("the new password must be different from the old password");
+    }
+    User user = userRepository
+        .findByEmail(email)
+        .orElseThrow(
+            () -> new InvalidCredentialsException("the email or password is incorrect"));
+    if (!passwordEncoder.matches(requestDto.getOldPassword(), user.getPassword())) {
+      throw new InvalidCredentialsException("the old password is incorrect");
+    }
+
+    final String encodedNewPassword = passwordEncoder.encode(requestDto.getNewPassword());
+    user.setPassword(encodedNewPassword);
+    userRepository.save(user);
   }
 }

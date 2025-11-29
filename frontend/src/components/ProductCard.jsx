@@ -26,7 +26,6 @@ export default function ProductCard({ product }) {
                     {product.category?.name?.toUpperCase() || "GENERAL"}
                 </div>
 
-                {/* Gender Badge (Optional) */}
                 <div className="badge badge-ghost badge-sm absolute top-3 right-3 bg-base-100/90 backdrop-blur-sm">
                     {product.gender}
                 </div>

@@ -13,37 +13,39 @@ public class ControllerAdvice {
 
     @ExceptionHandler(ProductNotFoundError.class)
     public ResponseEntity<ErrorResponse> handleResourceNotFound(
-        ProductNotFoundError ex
-    ) {
+            ProductNotFoundError ex) {
         ErrorResponse error = new ErrorResponse(
-            HttpStatus.NOT_FOUND.value(),
-            ex.getMessage(),
-            System.currentTimeMillis()
-        );
+                HttpStatus.NOT_FOUND.value(),
+                ex.getMessage(),
+                System.currentTimeMillis());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<Map<String, String>> handleAccessDenied(
-        AccessDeniedException e
-    ) {
+            AccessDeniedException e) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
-            Map.of(
-                "error",
-                "You do not have permission to access this resource"
-            )
-        );
+                Map.of(
+                        "error",
+                        "You do not have permission to access this resource"));
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<ErrorResponse> handleRuntimeException(RuntimeException ex) {
+        ErrorResponse error = new ErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                ex.getMessage(),
+                System.currentTimeMillis());
+        return ResponseEntity.badRequest().body(error);
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGenericException(Exception ex) {
         ErrorResponse error = new ErrorResponse(
-            HttpStatus.INTERNAL_SERVER_ERROR.value(),
-            "An error occurred: " + ex.getMessage(),
-            System.currentTimeMillis()
-        );
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                "An error occurred: " + ex.getMessage(),
+                System.currentTimeMillis());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
-            error
-        );
+                error);
     }
 }
