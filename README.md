@@ -137,14 +137,6 @@ npm run dev
 
 Access the application at http://localhost:5173.
 
-### 📜 API Documentation
-Swagger UI is available via the API Gateway aggregation or individual services:
-
-* API Gateway Swagger: http://localhost:8083/swagger-ui.html
-* Auth Service: http://localhost:8084/swagger-ui.html
-* Product Service: http://localhost:8085/swagger-ui.html
-* Order Service: http://localhost:8086/swagger-ui.html
-
 ### 🧪 Testing
 
 #### Backend
