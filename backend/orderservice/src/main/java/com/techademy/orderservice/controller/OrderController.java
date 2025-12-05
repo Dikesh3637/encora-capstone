@@ -1,8 +1,12 @@
 package com.techademy.orderservice.controller;
 
 import com.techademy.orderservice.dto.OrderItemRequestDto;
+import com.techademy.orderservice.dto.OrderResponseDto;
 import com.techademy.orderservice.service.OrderService;
 import com.techademy.orderservice.service.ProductCheckEventProducerService;
+
+import java.util.List;
+
 import org.example.events.ProductCheckEvent;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,23 +23,20 @@ public class OrderController {
     private final ProductCheckEventProducerService productCheckEventProducerService;
 
     public OrderController(
-        OrderService orderService,
-        ProductCheckEventProducerService productCheckEventProducerService
-    ) {
+            OrderService orderService,
+            ProductCheckEventProducerService productCheckEventProducerService) {
         this.orderService = orderService;
-        this.productCheckEventProducerService =
-            productCheckEventProducerService;
+        this.productCheckEventProducerService = productCheckEventProducerService;
     }
 
     @PostMapping("/")
     @PreAuthorize("hasRole('USER')")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<String> placeOrder(
-        @RequestBody OrderItemRequestDto orderRequest
-    ) {
+            @RequestBody OrderItemRequestDto orderRequest) {
         String userId = SecurityContextHolder.getContext()
-            .getAuthentication()
-            .getName();
+                .getAuthentication()
+                .getName();
         ProductCheckEvent productCheckEvent = new ProductCheckEvent();
 
         productCheckEvent.setProductId(orderRequest.getProductId().toString());
@@ -45,15 +46,22 @@ public class OrderController {
         productCheckEvent.setPrice(orderRequest.getPrice());
         productCheckEvent.setProductName(orderRequest.getProductName());
         productCheckEvent.setProductVariantId(
-            orderRequest.getProductVariantId()
-        );
+                orderRequest.getProductVariantId());
 
         productCheckEventProducerService.sendProductCheckEvent(
-            productCheckEvent
-        );
+                productCheckEvent);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(
-            "Order placed successfully"
-        );
+                "Order placed successfully");
+    }
+
+    @GetMapping("/")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<List<OrderResponseDto>> getMyOrders() {
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        List<OrderResponseDto> orders = orderService.getUserOrders(userId);
+
+        return ResponseEntity.ok(orders);
     }
 }

@@ -1,40 +1,40 @@
 services:
-    broker:
-        image: docker.io/apache/kafka:latest
-        hostname: broker
-        container_name: broker
-        ports:
-            - "9092:9092" # Kafka exposed locally
-        environment:
-            KAFKA_BROKER_ID: 1
-            KAFKA_NODE_ID: 1
+  broker:
+    image: docker.io/apache/kafka:latest
+    hostname: broker
+    container_name: broker
+    ports:
+      - "9092:9092" # Kafka exposed locally
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_NODE_ID: 1
 
-            # KRaft settings
-            KAFKA_PROCESS_ROLES: "broker,controller"
-            KAFKA_CONTROLLER_LISTENER_NAMES: "CONTROLLER"
-            KAFKA_CONTROLLER_QUORUM_VOTERS: "1@broker:29093"
+      # KRaft settings
+      KAFKA_PROCESS_ROLES: "broker,controller"
+      KAFKA_CONTROLLER_LISTENER_NAMES: "CONTROLLER"
+      KAFKA_CONTROLLER_QUORUM_VOTERS: "1@broker:29093"
 
-            # Listeners
-            KAFKA_LISTENERS: "PLAINTEXT://broker:29092,CONTROLLER://broker:29093,PLAINTEXT_HOST://0.0.0.0:9092"
-            KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://broker:29092,PLAINTEXT_HOST://localhost:9092"
-            KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT"
+      # Listeners
+      KAFKA_LISTENERS: "PLAINTEXT://broker:29092,CONTROLLER://broker:29093,PLAINTEXT_HOST://0.0.0.0:9092"
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://broker:29092,PLAINTEXT_HOST://localhost:9092"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT"
 
-            # Other settings
-            KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-            KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
-            KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      # Other settings
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
 
-            # Cluster ID
-            CLUSTER_ID: "MkU3OEVBNTcwNTJENDM2Qk"
+      # Cluster ID
+      CLUSTER_ID: "MkU3OEVBNTcwNTJENDM2Qk"
 
-    kafka-ui:
-        image: provectuslabs/kafka-ui:latest
-        container_name: kafka-ui
-        ports:
-            - "9093:9093" # UI available at http://localhost:9093
-        depends_on:
-            - broker
-        environment:
-            KAFKA_CLUSTERS_0_NAME: local
-            KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: broker:29092
-            KAFKA_CLUSTERS_0_ZOOKEEPER: ""
+  kafka-ui:
+    image: docker.io/provectuslabs/kafka-ui:latest
+    container_name: kafka-ui
+    ports:
+      - "9093:8080" # UI available at http://localhost:9093
+    depends_on:
+      - broker
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: broker:29092
+      KAFKA_CLUSTERS_0_ZOOKEEPER: ""

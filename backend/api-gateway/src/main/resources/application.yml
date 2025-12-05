@@ -63,15 +63,6 @@ spring:
                 - StripPrefix=3
                 - JwtValidation
 
-            # Websocket Service Routes - HAS JwtValidation
-            - id: websocket-service
-              uri: http://localhost:3000
-              predicates:
-                - Path=/ws/**
-              filters:
-                - StripPrefix=1
-                - JwtValidation
-
             # Debug route
             - id: debug-echo-route
               uri: https://postman-echo.com

@@ -23,7 +23,7 @@ const AdminDeleteProductCard = ({ product, onSelect }) => {
     mutationFn: deleteProduct,
     onSuccess: () => {
       toast.success(`Product ID: ${product.id} deleted successfully.`);
-      queryClient.invalidateQueries(["products", "admin-search"]);
+      queryClient.invalidateQueries(["product", "admin-search"]);
     },
     onError: (error) => {
       console.error(error.message);

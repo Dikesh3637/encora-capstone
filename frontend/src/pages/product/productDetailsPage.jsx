@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router";
-import { useQuery } from "@tanstack/react-query";
-import { ShoppingBag, Star, Heart, Plus, Minus, Truck } from "lucide-react";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { ShoppingBag, Plus, Minus, Truck } from "lucide-react";
 import { fetchProductById } from "../../query/getProductByIdQuery";
-import { useMutation } from "@tanstack/react-query";
 import { addCartItem } from "../../query/addCartItemQuery";
+import { placeOrder } from "../../query/postOrderQuery";
 import { toast } from "sonner";
 
 const SORTED_SIZES = ["XS", "S", "M", "L", "XL", "XXL"];
@@ -12,6 +12,7 @@ const SORTED_SIZES = ["XS", "S", "M", "L", "XL", "XXL"];
 const ProductDetailsPage = () => {
   const { productId: id } = useParams();
 
+  // 1. Fetch Product Data
   const {
     data: product,
     isLoading,
@@ -22,10 +23,11 @@ const ProductDetailsPage = () => {
     enabled: !!id,
   });
 
-  const mutation = useMutation({
+  // 2. Setup Mutations
+  const cartMutation = useMutation({
     mutationFn: addCartItem,
-    onSuccess: (data) => {
-      toast("Item added to cart successfully!");
+    onSuccess: () => {
+      toast.success("Item added to cart successfully!");
     },
     onError: (error) => {
       toast.error("Failed to add item to cart.");
@@ -33,13 +35,27 @@ const ProductDetailsPage = () => {
     },
   });
 
+  const buyNowMutation = useMutation({
+    mutationFn: placeOrder,
+    onSuccess: (data) => {
+      toast.success("Order request placed successfully!");
+    },
+    onError: (error) => {
+      toast.error("Failed to place order. Please try again.");
+      console.error("Place order error:", error);
+    },
+  });
+
+  // 3. State Management
   const [selectedSize, setSelectedSize] = useState(null);
   const [quantity, setQuantity] = useState(1);
 
+  // Helper to find variant object by size string (e.g. "M")
   const getVariant = (size) => {
     return product?.variants?.find((v) => v.size === size);
   };
 
+  // Dynamic stock limit based on selection
   const maxStock = selectedSize
     ? getVariant(selectedSize)?.stockQuantity || 0
     : 0;
@@ -57,15 +73,43 @@ const ProductDetailsPage = () => {
     }
   };
 
+  // 4. Action Handlers
   const handleAddToCart = () => {
-    if (!selectedSize) return toast("Please select a size");
-    mutation.mutate({
+    if (!selectedSize) return toast.warning("Please select a size");
+
+    cartMutation.mutate({
       productId: product.id,
       size: selectedSize,
       quantity,
     });
   };
 
+  const handleOnBuyNow = () => {
+    if (!selectedSize) return toast.warning("Please select a size");
+
+    // Find the specific variant object (e.g. { id: 100, size: "M", ... })
+    const selectedVariant = getVariant(selectedSize);
+
+    if (!selectedVariant) {
+      return toast.error("Selected variant is unavailable.");
+    }
+
+    // Construct payload matching your Backend DTO exactly
+    const orderPayload = {
+      productId: product.id, // e.g. 50
+      productVariantId: selectedVariant.id, // e.g. 100
+      productName: product.name, // e.g. "Board Shorts"
+      size: selectedSize, // e.g. "M"
+      price: product.price, // e.g. 1199.00
+      quantity: quantity, // e.g. 2
+    };
+
+    console.log(orderPayload);
+
+    buyNowMutation.mutate(orderPayload);
+  };
+
+  // 5. Loading & Error States
   if (isLoading)
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -80,9 +124,11 @@ const ProductDetailsPage = () => {
       </div>
     );
 
+  // 6. Render UI
   return (
     <div className="min-h-screen bg-base-100 py-8 px-4 flex justify-center">
       <div className="max-w-6xl w-full grid grid-cols-1 md:grid-cols-2 gap-10">
+        {/* LEFT: Product Image */}
         <div className="space-y-4">
           <div className="relative overflow-hidden rounded-2xl bg-base-200 aspect-[4/5] border border-base-200">
             <img
@@ -98,13 +144,12 @@ const ProductDetailsPage = () => {
           </div>
         </div>
 
+        {/* RIGHT: Product Details */}
         <div className="flex flex-col space-y-6 pt-2">
           <div>
-            <div className="flex justify-between items-start">
-              <h1 className="text-4xl font-bold text-base-content leading-tight">
-                {product.name}
-              </h1>
-            </div>
+            <h1 className="text-4xl font-bold text-base-content leading-tight">
+              {product.name}
+            </h1>
             <div className="flex items-center gap-4 mt-2">
               <span className="text-2xl font-semibold text-primary">
                 ₹{product.price?.toLocaleString()}
@@ -118,6 +163,7 @@ const ProductDetailsPage = () => {
 
           <div className="divider"></div>
 
+          {/* Size Selector */}
           <div>
             <div className="flex justify-between items-center mb-3">
               <span className="font-semibold">Select Size</span>
@@ -148,6 +194,7 @@ const ProductDetailsPage = () => {
             </div>
           </div>
 
+          {/* Quantity Selector & Total Price */}
           <div
             className={`transition-all duration-300 ${
               selectedSize
@@ -194,16 +241,22 @@ const ProductDetailsPage = () => {
             </div>
           </div>
 
+          {/* Buttons */}
           <div className="flex gap-4 mt-4">
             <button
               className="btn btn-primary flex-1 btn-lg text-lg"
-              disabled={!selectedSize}
+              disabled={!selectedSize || buyNowMutation.isPending}
+              onClick={handleOnBuyNow}
             >
-              Buy Now
+              {buyNowMutation.isPending ? (
+                <span className="loading loading-spinner loading-sm"></span>
+              ) : (
+                "Buy Now"
+              )}
             </button>
             <button
               className="btn btn-outline flex-1 btn-lg text-lg group"
-              disabled={!selectedSize}
+              disabled={!selectedSize || cartMutation.isPending}
               onClick={handleAddToCart}
             >
               <ShoppingBag className="w-5 h-5 group-hover:scale-110 transition-transform" />
@@ -211,6 +264,7 @@ const ProductDetailsPage = () => {
             </button>
           </div>
 
+          {/* Delivery Info */}
           <div className="bg-base-200 rounded-xl p-4 flex flex-col gap-3 text-sm mt-4">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-base-100 rounded-full">
